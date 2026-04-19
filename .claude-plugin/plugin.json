@@ -1,6 +1,6 @@
 {
   "name": "claude-code-win32",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Hybrid bash→PowerShell transpiler for Claude Code on Windows. Passes POSIX-safe commands through to Git Bash, rewrites Unix idioms to PowerShell equivalents, translates MSYS drive paths, and denies Unix-only commands with per-command hints.",
   "author": {
     "name": "Hendrik Mennen",
