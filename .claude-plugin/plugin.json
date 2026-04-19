@@ -21,6 +21,5 @@
     "msys",
     "git-bash",
     "hook"
-  ],
-  "hooks": "./hooks/hooks.json"
+  ]
 }
