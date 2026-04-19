@@ -1,0 +1,40 @@
+{
+  "name": "claude-code-win32",
+  "owner": {
+    "name": "Hendrik Mennen",
+    "email": "hendrik@mennen.dev"
+  },
+  "metadata": {
+    "description": "Claude Code Plugin: hybrid bash→PowerShell transpiler for Windows. POSIX pass-through, targeted rewrites, MSYS path translation.",
+    "categories": ["developer-tools", "productivity", "shell"],
+    "tags": [
+      "windows",
+      "win32",
+      "bash",
+      "powershell",
+      "pwsh",
+      "transpile",
+      "transpiler",
+      "msys",
+      "git-bash",
+      "hook",
+      "cross-platform"
+    ]
+  },
+  "plugins": [
+    {
+      "name": "claude-code-win32",
+      "source": "./",
+      "description": "Makes Claude's Bash tool calls work cleanly on Windows: POSIX pass-through via Git Bash, PowerShell rewrites for common Unix idioms, MSYS drive-path translation, and deny-with-hint for Unix-only commands.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Hendrik Mennen"
+      },
+      "permissions": {
+        "filesystem": [],
+        "subprocess": ["node", "powershell.exe", "pwsh.exe"],
+        "network": []
+      }
+    }
+  ]
+}

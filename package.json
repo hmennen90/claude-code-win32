@@ -1,0 +1,80 @@
+{
+  "name": "claude-code-win32",
+  "version": "0.1.0",
+  "description": "Claude Code Plugin: hybrid bash→PowerShell transpiler for Windows. POSIX pass-through, targeted rewrites, MSYS path translation, per-command deny hints.",
+  "type": "module",
+  "main": "./dist/transpile.js",
+  "types": "./dist/transpile.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/transpile.d.ts",
+      "import": "./dist/transpile.js"
+    },
+    "./paths": {
+      "types": "./dist/paths.d.ts",
+      "import": "./dist/paths.js"
+    },
+    "./chain": {
+      "types": "./dist/chain.d.ts",
+      "import": "./dist/chain.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "claude-code-win32-hook": "./dist/hook.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "tsc && node --test dist/test/*.test.js",
+    "preversion": "npm run build && npm test",
+    "version": "node scripts/sync-version.js && git add .claude-plugin/plugin.json .claude-plugin/marketplace.json",
+    "postversion": "git push && git push --tags",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "files": [
+    "dist/*.js",
+    "dist/*.d.ts",
+    ".claude-plugin/**",
+    "hooks/**",
+    "scripts/**",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "claude",
+    "claude-code",
+    "claude-code-plugin",
+    "claude-plugin",
+    "windows",
+    "win32",
+    "bash",
+    "powershell",
+    "pwsh",
+    "transpile",
+    "transpiler",
+    "msys",
+    "git-bash",
+    "hook",
+    "cross-platform",
+    "developer-tools",
+    "typescript"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hmennen90/claude-code-win32.git"
+  },
+  "homepage": "https://github.com/hmennen90/claude-code-win32#readme",
+  "bugs": {
+    "url": "https://github.com/hmennen90/claude-code-win32/issues"
+  },
+  "license": "MIT",
+  "author": "Hendrik Mennen",
+  "devDependencies": {
+    "@types/node": "^22.15.2",
+    "typescript": "^5.8.3"
+  }
+}
