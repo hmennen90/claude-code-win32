@@ -1,6 +1,6 @@
 {
   "name": "claude-code-win32",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Claude Code Plugin: hybrid bash→PowerShell transpiler for Windows. POSIX pass-through, targeted rewrites, MSYS path translation, per-command deny hints.",
   "type": "module",
   "main": "./dist/transpile.js",
@@ -26,7 +26,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "test": "tsc && node --test dist/test/*.test.js",
+    "test": "tsc && node scripts/run-tests.js",
     "preversion": "npm run build && npm test",
     "version": "node scripts/sync-version.js && git add .claude-plugin/plugin.json .claude-plugin/marketplace.json",
     "postversion": "git push && git push --tags",

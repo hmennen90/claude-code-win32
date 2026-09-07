@@ -5,6 +5,7 @@ import {
   POSIX_SAFE_BINS,
   UNIX_ONLY_NO_EQUIVALENT,
   denyHint,
+  looksLikePowerShell,
   tryRewriteSingle,
 } from "./rewriters.js";
 import { PSEdition, TranspileConfig, TranspileResult } from "./types.js";
@@ -37,7 +38,14 @@ const encodePowerShell = (psCommand: string, exe: "pwsh" | "powershell"): string
 const binIsGitBashSafe = (bin: string, cfg: TranspileConfig): boolean => {
   if (cfg.extraForcePowerShell.includes(bin)) return false;
   if (cfg.extraPosixSafe.includes(bin)) return true;
-  return POSIX_SAFE_BINS.has(bin);
+  if (POSIX_SAFE_BINS.has(bin)) return true;
+  // PowerShell-shaped names (Get-ChildItem, .\script.ps1) need PowerShell.
+  if (looksLikePowerShell(bin)) return false;
+  // Everything else: an unknown binary is still an ordinary executable. Git Bash
+  // resolves both Windows PATH and the MSYS /usr/bin tree; PowerShell only sees
+  // the former, so routing the unknown case to PS is what makes a working `jq`
+  // report "not found".
+  return true;
 };
 
 export const transpile = (

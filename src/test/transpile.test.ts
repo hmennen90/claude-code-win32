@@ -174,3 +174,41 @@ describe("transpile — config toggles", () => {
     assert.equal(v.kind, "rewrite");
   });
 });
+
+describe("transpile — unknown binaries stay in Git Bash", () => {
+  it("passes jq through instead of routing it to PowerShell", () => {
+    const v = transpile("jq -r '.name' package.json", cfg, ps7);
+    assert.equal(v.kind, "pass");
+  });
+
+  it("passes a pipeline ending in jq through", () => {
+    const v = transpile("gh pr view 12 --json title | jq -r .title", cfg, ps7);
+    assert.equal(v.kind, "pass");
+  });
+
+  it("passes an unknown binary through rather than guessing PowerShell", () => {
+    const v = transpile("some-exotic-tool --flag", cfg, ps7);
+    assert.equal(v.kind, "pass");
+  });
+
+  it("still routes PowerShell cmdlets to PowerShell", () => {
+    const v = transpile("Get-ChildItem -Path C:/temp", cfg, ps7);
+    assert.equal(v.kind, "rewrite");
+  });
+
+  it("still routes .ps1 scripts to PowerShell", () => {
+    const v = transpile("./deploy.ps1 -Env prod", cfg, ps7);
+    assert.equal(v.kind, "rewrite");
+  });
+
+  it("extraForcePowerShell still wins over the pass-through default", () => {
+    const custom = { ...cfg, extraForcePowerShell: ["jq"] };
+    const v = transpile("jq -r .name package.json", custom, ps7);
+    assert.equal(v.kind, "rewrite");
+  });
+
+  it("deny-list still wins over the pass-through default", () => {
+    const v = transpile("sudo apt install jq", cfg, ps7);
+    assert.equal(v.kind, "deny");
+  });
+});

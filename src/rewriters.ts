@@ -70,7 +70,67 @@ export const POSIX_SAFE_BINS = new Set<string>([
   "source",
   ".",
   "whoami",
+  // JSON/text tooling Claude reaches for constantly — all ship .exe builds and
+  // resolve under Git Bash. Missing entries here used to drag the WHOLE chain
+  // into PowerShell, where the MSYS PATH (and therefore the tool) is gone.
+  "jq",
+  "yq",
+  "rg",
+  "fd",
+  "bat",
+  "delta",
+  "diff",
+  "patch",
+  "tar",
+  "gzip",
+  "gunzip",
+  "zip",
+  "unzip",
+  "base64",
+  "md5sum",
+  "sha1sum",
+  "sha256sum",
+  "openssl",
+  "ssh",
+  "scp",
+  "sftp",
+  "rsync",
+  "make",
+  "cmake",
+  "ninja",
+  "sqlite3",
+  "psql",
+  "mysql",
+  "redis-cli",
+  "aws",
+  "az",
+  "gcloud",
+  "terraform",
+  "helm",
+  "ruby",
+  "perl",
+  "pytest",
+  "date",
+  "sleep",
+  "seq",
+  "stat",
+  "ln",
+  "du",
+  "df",
+  "ps",
+  "kill",
+  "sh",
+  "bash",
 ]);
+
+/**
+ * A binary we don't know is assumed to be a normal executable and passed to
+ * Git Bash — an allowlist can never be complete, and forcing the unknown case
+ * into PowerShell silently changes PATH resolution. The exception is a name
+ * that is clearly PowerShell: a Verb-Noun cmdlet or a .ps1 script.
+ */
+export const looksLikePowerShell = (bin: string): boolean =>
+  /^[A-Z][A-Za-z0-9]*-[A-Z][A-Za-z0-9]*$/.test(bin) || /\.ps1$/i.test(bin);
 
 /**
  * Unix-only commands with no meaningful Windows equivalent — translating them

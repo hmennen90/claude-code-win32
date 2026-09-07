@@ -1,0 +1,111 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*.*.*']
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Build and verify
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Build and test
+        run: npm test
+
+      - name: Tag matches package.json version
+        shell: bash
+        env:
+          TAG_REF: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          PKG=$(node -p "require('./package.json').version")
+          if [ "$TAG_REF" != "v${PKG}" ]; then
+            echo "::error::Tag $TAG_REF does not match package.json version $PKG"
+            exit 1
+          fi
+
+  publish:
+    name: Publish
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write   # create the GitHub release
+      id-token: write   # npm provenance
+    env:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0   # release notes are generated from the commit history
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: package-lock.json
+          registry-url: https://registry.npmjs.org
+
+      - name: Install
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: GitHub release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG_REF: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          gh release create "$TAG_REF" --title "$TAG_REF" --generate-notes --verify-tag
+
+      # Publishing is skipped rather than failed when no npm token is configured,
+      # so a tag push still produces a GitHub release on its own.
+      - name: npm publish
+        if: env.NPM_TOKEN != ''
+        shell: bash
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          set -euo pipefail
+          npm publish --provenance --access public
+
+      - name: Note skipped npm publish
+        if: env.NPM_TOKEN == ''
+        shell: bash
+        run: |
+          set -euo pipefail
+          {
+            echo "### npm publish skipped"
+            echo ""
+            echo "No \`NPM_TOKEN\` secret configured — the GitHub release was created, the npm package was not published."
+          } >> "$GITHUB_STEP_SUMMARY"
