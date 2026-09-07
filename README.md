@@ -86,6 +86,21 @@ npm run build
 npm test
 ```
 
+CI runs the suite on Node 20/22/24 across ubuntu-latest **and** windows-latest, and
+checks that `package.json`, `.claude-plugin/plugin.json` and
+`.claude-plugin/marketplace.json` carry the same version.
+
+### Cutting a release
+
+```bash
+npm version <patch|minor|major>   # bumps package.json, syncs plugin/marketplace, tags, pushes
+```
+
+The `v*.*.*` tag triggers `.github/workflows/release.yml`: it builds and tests on
+Linux and Windows, verifies the tag matches `package.json`, creates the GitHub
+release with generated notes, and publishes to npm with provenance. The npm step is
+skipped (not failed) when no `NPM_TOKEN` secret is configured.
+
 ## Status
 
 **v0.1.0** — initial release. 40 unit tests, live verified on PS 5.1 (Windows 11).
