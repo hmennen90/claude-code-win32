@@ -30,7 +30,7 @@
       "name": "claude-code-win32",
       "source": "./",
       "description": "Makes Claude's Bash tool calls work cleanly on Windows: POSIX pass-through via Git Bash, PowerShell rewrites for common Unix idioms, MSYS drive-path translation, and deny-with-hint for Unix-only commands.",
-      "version": "0.1.1",
+      "version": "0.1.2",
       "author": {
         "name": "Hendrik Mennen"
       },

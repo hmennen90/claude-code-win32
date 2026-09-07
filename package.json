@@ -1,6 +1,6 @@
 {
   "name": "claude-code-win32",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Claude Code Plugin: hybrid bash→PowerShell transpiler for Windows. POSIX pass-through, targeted rewrites, MSYS path translation, per-command deny hints.",
   "type": "module",
   "main": "./dist/transpile.js",
