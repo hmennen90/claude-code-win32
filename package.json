@@ -74,7 +74,7 @@
   "license": "MIT",
   "author": "Hendrik Mennen",
   "devDependencies": {
-    "@types/node": "^22.15.2",
+    "@types/node": "^26.6.2",
     "typescript": "^5.8.3"
   }
 }
